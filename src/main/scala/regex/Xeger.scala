@@ -8,6 +8,7 @@ import dk.brics.automaton.RegExp
 import dk.brics.automaton.State
 import dk.brics.automaton.Transition
 import scala.beans.BeanProperty
+import scala.annotation.tailrec
 
 /**
  * An object that will generate text from a regular expression. In a way, it's the opposite of a regular expression
@@ -17,15 +18,31 @@ object Xeger {
 
   @BeanProperty val random = new Random()
 
-  def generate(regex: String): String = {
+  /**
+   *Generates a random String based on the given regular expression
+   *
+   * @param regex
+   * @return
+   */
+  def generate(regex: String, size:Int): List[String] = {
     val automaton = new RegExp(regex).toAutomaton()
     val builder = new StringBuilder()
-    generate(builder, automaton.getInitialState)
-    builder.toString
+    @tailrec
+    def loop(i:Int, list:List[String]):List[String] = {
+      if (i == size) list
+      else {
+        generate(builder, automaton.getInitialState)
+        loop(i+1, list:+builder.toString)
+      }
+    }
+    loop(0,Nil)
   }
 
   /**
-   * Generates a random String that is guaranteed to match the regular expression passed to the constructor.
+   * Generates a random String that is guaranteed to match the regular expression.
+   *
+   * @param builder
+   * @param state
    */
   private def generate(builder: StringBuilder, state: State) {
     val transitions = state.getSortedTransitions(false)
@@ -43,6 +60,11 @@ object Xeger {
     generate(builder, transition.getDest)
   }
 
+  /**
+   *
+   * @param builder
+   * @param transition
+   */
   private def appendChoice(builder: StringBuilder, transition: Transition) {
     val c = Xeger.getRandomInt(transition.getMin, transition.getMax, random).toChar
     builder.append(c)
