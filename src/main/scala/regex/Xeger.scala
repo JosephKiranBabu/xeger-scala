@@ -26,12 +26,12 @@ object Xeger {
    */
   def generate(regex: String, size:Int): List[String] = {
     val automaton = new RegExp(regex).toAutomaton()
-    val builder = new StringBuilder()
     @tailrec
     def loop(i:Int, list:List[String]):List[String] = {
       if (i == size) list
       else {
-        generate(builder, automaton.getInitialState)
+        val builder = new StringBuilder
+        generate(builder , automaton.getInitialState)
         loop(i+1, list:+builder.toString)
       }
     }
@@ -66,7 +66,7 @@ object Xeger {
    * @param transition
    */
   private def appendChoice(builder: StringBuilder, transition: Transition) {
-    val c = Xeger.getRandomInt(transition.getMin, transition.getMax, random).toChar
+    val c = getRandomInt(transition.getMin, transition.getMax, random).toChar
     builder.append(c)
   }
 
