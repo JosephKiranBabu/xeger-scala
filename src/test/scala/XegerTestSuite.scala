@@ -9,4 +9,9 @@ class XegerTestSuite extends FunSuite{
   test("Xeger produces required number of values"){
     assert(Xeger.generate("""[A-Za-z0-9]{20}""", 100).size === 100)
   }
+
+  test("Xeger produces unique values") {
+    assert(Xeger.generate("""[A-Za-z0-9]{20}""", 100).toSet.size === 100)
+  }
+
 }
